@@ -1,8 +1,15 @@
 const express = require("express");
 const chats = require("./data/data");
 const app = express();
+const colors = require("colors");
 const dotenv = require("dotenv");
+const connectDB = require("./config/db");
 dotenv.config();
+connectDB();
+
+// ! If you want colorful terminal install
+// ! npm i colors
+// ! and you can apply by using . notation
 
 const Port = process.env.PORT || 5000;
 
@@ -19,4 +26,4 @@ app.get("/api/chat/:id", (req, res) => {
   res.send(singleChat);
 });
 
-app.listen(Port, console.log(`Server is Running on Port ${Port}`));
+app.listen(Port, console.log(`Server is Running on Port ${Port}`.yellow.bold));
