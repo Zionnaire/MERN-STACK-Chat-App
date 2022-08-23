@@ -12,13 +12,40 @@ const SignUp = () => {
   const [pic, setPic] = useState("");
   const [show, setShow] = useState(false);
   const [show2, setShow2] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleClick = () => setShow(!show);
   const handleClick2 = () => setShow2(!show2);
 
   const postDetails = (pics) => {};
 
-  const submitHandler = () => {};
+  const submitHandler = async () => {
+    setLoading(true);
+    if (!name || !email || !password || !confirmPassword) {
+      toast({
+        title: "Please fill all the details",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast({
+        title: "Passwords do not match",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    try {
+    } catch (error) {}
+  };
 
   return (
     <VStack spacing="5px" color="black">

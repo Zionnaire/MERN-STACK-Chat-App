@@ -5,7 +5,7 @@ const colors = require("colors");
 const userRoutes = require("./Routes/userRoutes");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-
+const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 app.use(express.json());
 
 dotenv.config();
@@ -31,5 +31,7 @@ app.get("/", (req, res) => {
 // });
 
 app.use("/api/user", userRoutes);
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(Port, console.log(`Server is Running on Port ${Port}`.yellow.bold));
