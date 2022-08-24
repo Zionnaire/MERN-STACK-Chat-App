@@ -25,6 +25,7 @@ userModel.methods.matchPassword = async function (enteredPassword) {
 // ensures that before saving it should do following work
 // Always should be on top of actual model which we are creating
 userModel.pre("save", async function (next) {
+  // If password is not modified then go ahead
   if (!this.isModified) {
     next();
   }

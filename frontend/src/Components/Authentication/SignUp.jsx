@@ -2,6 +2,7 @@ import React from "react";
 import { VStack } from "@chakra-ui/layout";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
+import { useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { Button } from "@chakra-ui/button";
 const SignUp = () => {
@@ -13,11 +14,53 @@ const SignUp = () => {
   const [show, setShow] = useState(false);
   const [show2, setShow2] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const toast = useToast();
   const handleClick = () => setShow(!show);
   const handleClick2 = () => setShow2(!show2);
 
-  const postDetails = (pics) => {};
+  const postDetails = (pics) => {
+    setLoading(true);
+    if (pics === undefined) {
+      toast({
+        title: "Please Select an Image",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    if (pics.type === "image/jpeg" || pics.at.type === "image/png") {
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "chat-app");
+      data.append("cloud_name", "dyjrhqbd6");
+      fetch("https://api.cloudinary.com/v1_1/dyjrhqbd6/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setPic(data.url.toString());
+          // console.log(data.url.toString());
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      toast({
+        title: "Please Select an Image",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
+  };
 
   const submitHandler = async () => {
     setLoading(true);
@@ -56,14 +99,14 @@ const SignUp = () => {
           onChange={(e) => setName(e.target.value)}
         />
       </FormControl>
-      <FormControl id="email" isRequired>
+      <FormControl id="email2" isRequired>
         <FormLabel>Email:</FormLabel>
         <Input
           placeholder="Enter Your Email"
           onChange={(e) => setEmail(e.target.value)}
         />
       </FormControl>
-      <FormControl id="password" isRequired>
+      <FormControl id="password2" isRequired>
         <FormLabel>Password:</FormLabel>
         <InputGroup>
           <Input
@@ -107,6 +150,7 @@ const SignUp = () => {
         width="100%"
         style={{ marginTop: 15 }}
         onClick={submitHandler}
+        isLoading={loading}
       >
         Sign Up
       </Button>
