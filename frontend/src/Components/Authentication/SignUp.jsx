@@ -5,6 +5,8 @@ import { Input, InputGroup, InputRightElement } from "@chakra-ui/input";
 import { useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { Button } from "@chakra-ui/button";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
 const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,10 +19,11 @@ const SignUp = () => {
   const toast = useToast();
   const handleClick = () => setShow(!show);
   const handleClick2 = () => setShow2(!show2);
+  const history = useHistory();
 
   const postDetails = (pics) => {
     setLoading(true);
-    if (pics === undefined) {
+    if (pic === undefined) {
       toast({
         title: "Please Select an Image",
         status: "warning",
@@ -30,7 +33,7 @@ const SignUp = () => {
       });
       return;
     }
-    if (pics.type === "image/jpeg" || pics.at.type === "image/png") {
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
       const data = new FormData();
       data.append("file", pics);
       data.append("upload_preset", "chat-app");
@@ -42,7 +45,7 @@ const SignUp = () => {
         .then((res) => res.json())
         .then((data) => {
           setPic(data.url.toString());
-          // console.log(data.url.toString());
+          console.log(data.url.toString());
           setLoading(false);
         })
         .catch((err) => {
@@ -87,7 +90,43 @@ const SignUp = () => {
     }
 
     try {
-    } catch (error) {}
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "/api/user",
+        {
+          name,
+          email,
+          password,
+          pic,
+        },
+        config
+      );
+      console.log(data);
+      toast({
+        title: "Registration Successful",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      setLoading(false);
+      history.push("/chats");
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: error.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setLoading(false);
+    }
   };
 
   return (
