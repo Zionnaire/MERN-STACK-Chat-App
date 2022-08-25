@@ -24,6 +24,12 @@ userModel.methods.matchPassword = async function (enteredPassword) {
 
 // ensures that before saving it should do following work
 // Always should be on top of actual model which we are creating
+
+// Steps for Password Encryption
+// 1. import bcryptjs
+// 2. make salt using genSalt function of value which you want
+// 3. hash your pass. using hash
+// this.password = bcrypt.hash(this.password , salt)
 userModel.pre("save", async function (next) {
   // If password is not modified then go ahead
   if (!this.isModified) {

@@ -34,10 +34,15 @@ const SignUp = () => {
       return;
     }
     if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      // ? The FormData interface provides a way to easily construct a set of key/value pairs representing form fields and their values, which can then be easily sent using the fetch() or XMLHttpRequest.send() method.
+
       const data = new FormData();
+
+      // ? Appends a new value onto an existing key inside a FormData object, or adds the key if it does not already exist.
       data.append("file", pics);
       data.append("upload_preset", "chat-app");
       data.append("cloud_name", "dyjrhqbd6");
+      // ! dyjrhqbd6 -> Cloud Name
       fetch("https://api.cloudinary.com/v1_1/dyjrhqbd6/image/upload", {
         method: "post",
         body: data,
@@ -45,7 +50,7 @@ const SignUp = () => {
         .then((res) => res.json())
         .then((data) => {
           setPic(data.url.toString());
-          console.log(data.url.toString());
+          // console.log(data.url.toString());
           setLoading(false);
         })
         .catch((err) => {
@@ -92,9 +97,11 @@ const SignUp = () => {
     try {
       const config = {
         headers: {
+          // ? It is written becoz to tell that data comes in json form.
           "Content-type": "application/json",
         },
       };
+      // Todo : Learn about axios from anywhere
       const { data } = await axios.post(
         "/api/user",
         {
@@ -105,7 +112,7 @@ const SignUp = () => {
         },
         config
       );
-      console.log(data);
+      // console.log(data);
       toast({
         title: "Registration Successful",
         status: "success",
@@ -113,8 +120,12 @@ const SignUp = () => {
         isClosable: true,
         position: "bottom",
       });
+      // Todo : Learn about how to implement localstorage
+      // ? The following snippet accesses the current domain's local Storage object and adds a data item to it using Storage.setItem().
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
+      // Todo : Learn useHistory
+      // if user is logged in then we will push user to chats page
       history.push("/chats");
     } catch (error) {
       toast({

@@ -1,3 +1,4 @@
+// express-async-handler -> Simple middleware for handling exceptions inside of async express routes and passing them to your express error handlers.
 const expressAsync = require("express-async-handler");
 const generateToken = require("../config/generateToken");
 const User = require("../Models/userModel");
@@ -26,6 +27,10 @@ const registerUser = expressAsync(async (req, res) => {
       email: user.email,
       pic: user.pic,
       token: generateToken(user._id),
+      // Steps for generating token
+      // 1. First make function which accepts unique id
+      // 2. import jsonwebtoken
+      // 3. return jwt.sign({id} , JWT_SECRET , {expiresIn : "30d"}) -> from your function
     });
   } else {
     res.status(400);
@@ -35,6 +40,11 @@ const registerUser = expressAsync(async (req, res) => {
 
 const authUser = expressAsync(async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Enter email and password");
+  }
 
   const user = await User.findOne({ email });
 
