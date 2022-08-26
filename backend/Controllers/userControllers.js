@@ -62,4 +62,21 @@ const authUser = expressAsync(async (req, res) => {
   }
 });
 
-module.exports = { registerUser, authUser };
+const allUser = expressAsync(async (req, res) => {
+  const keyword = req.query.search
+    ? {
+        $or: [
+          // Todo : Read about regex
+          // ? i is for case insensitivity
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+  // will give users which do not include user who is logged in at that time
+  const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+  res.send(users);
+  // console.log(keyword);
+});
+
+module.exports = { registerUser, authUser, allUser };
