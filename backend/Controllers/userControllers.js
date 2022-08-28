@@ -74,6 +74,7 @@ const allUser = expressAsync(async (req, res) => {
       }
     : {};
   // will give users which do not include user who is logged in at that time
+  // ? ne -> not equal to
   const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
   res.send(users);
   // console.log(keyword);
