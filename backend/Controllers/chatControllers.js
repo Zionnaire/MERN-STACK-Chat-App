@@ -84,4 +84,109 @@ const fetchChat = expressAsync(async (req, res) => {
   }
 });
 
-module.exports = { accessChat, fetchChat };
+const createGroupChat = expressAsync(async (req, res) => {
+  if (!req.body.users || !req.body.name) {
+    res.status(400).send({ message: "Please Fill all the fields" });
+  }
+  // ! What will happen if we use let here
+  var users = JSON.parse(req.body.users);
+
+  if (users.length < 2) {
+    res
+      .status(400)
+      .send({ message: "More than 2 users are require to form a group chat" });
+  }
+  // will push current user
+  users.push(req.user);
+
+  try {
+    const groupChat = await Chat.create({
+      chatName: req.body.name,
+      isGroupChat: true,
+      users: users,
+      groupAdmin: req.user,
+    });
+
+    const fullGroupChat = await Chat.find({ _id: groupChat._id })
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    console.log(fullGroupChat);
+    res.status(200).json(fullGroupChat);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+});
+
+const renameGroup = expressAsync(async (req, res) => {
+  const { chatId, chatName } = req.body;
+
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    // If we have same key and value then we can define like this
+    { chatName },
+    // this line written becoz if we dont write ,  it will give us old group name only
+    { new: true }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!updatedChat) {
+    res.status(404);
+    throw new Error("Chat not Found");
+  } else {
+    res.json(updatedChat);
+  }
+});
+
+const addToGroup = expressAsync(async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  const added = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      $push: { users: userId },
+    },
+    { new: true }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+  // Todo : We should also check that user should not be repeated
+  if (!added) {
+    res.status(400);
+    throw new Error("User Not Found");
+  } else {
+    res.json(added);
+  }
+});
+
+const removeFromGroup = expressAsync(async (req, res) => {
+  const { chatId, userId } = req.body;
+
+  const removed = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      $pull: { users: userId },
+    },
+    { new: true }
+  )
+    .populate("users", "-password")
+    .populate("groupAdmin", "-password");
+
+  if (!removed) {
+    res.status(400);
+    throw new Error("User Not Found");
+  } else {
+    res.json(removed);
+  }
+});
+
+module.exports = {
+  accessChat,
+  fetchChat,
+  createGroupChat,
+  renameGroup,
+  addToGroup,
+  removeFromGroup,
+};
