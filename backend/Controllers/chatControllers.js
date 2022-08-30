@@ -16,7 +16,7 @@ const accessChat = expressAsync(async (req, res) => {
   // In MongoDB, find() method is used to select documents in a collection and return a cursor to the selected documents. Cursor means a pointer that points to a document, when we use find() method it returns a pointer on the selected documents and returns one by one.
 
   let isChat = Chat.find({
-    // if this gonna  be single chat its gonna be groupChat
+    // if this gonna  be single chat its gonna be groupChat -> false
     isGroupChat: false,
     $and: [
       // user who is logged in The $elemMatch operator matches documents that contain an array field with at least one element that matches all the specified query criteria.
@@ -68,7 +68,7 @@ const fetchChat = expressAsync(async (req, res) => {
       .populate("groupAdmin", "-password")
       .populate("latestMessage")
       //   -1 -> sort descending
-      //   1 sort ascending
+      //   1 -> sort ascending
       .sort({ updateAt: -1 })
       .then(async (results) => {
         results = await User.populate(results, {
@@ -111,7 +111,7 @@ const createGroupChat = expressAsync(async (req, res) => {
       .populate("users", "-password")
       .populate("groupAdmin", "-password");
 
-    console.log(fullGroupChat);
+    // console.log(fullGroupChat);
     res.status(200).json(fullGroupChat);
   } catch (error) {
     res.status(400);
