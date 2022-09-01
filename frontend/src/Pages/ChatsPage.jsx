@@ -8,7 +8,7 @@ const ChatsPage = () => {
   const { user } = ChatState();
 
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       {user && <SideDrawer />}
       <Box
         display="flex"
