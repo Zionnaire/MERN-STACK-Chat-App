@@ -19,13 +19,13 @@ import {
   Input,
   useToast,
 } from "@chakra-ui/react";
+import { UserListItem } from "../UserAvatar/UserListItem";
 import { axios } from "axios";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { ChatState } from "../../Context/ChatProvider";
 import ProfileModel from "./ProfileModel";
 import { useHistory } from "react-router-dom";
 import ChatLoading from "../ChatLoading";
-import { UserListItem } from "../UserAvatar/UserListItem";
 
 const SideDrawer = () => {
   const { user } = ChatState();
@@ -93,7 +93,7 @@ const SideDrawer = () => {
       >
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <Button variant="ghost" onClick={onOpen}>
-            <i class="fas fa-search"></i>
+            <i className="fas fa-search"></i>
             {/* d is the when we have to show this parti. code in this given ex. base -> smallest screen we dont want to show that on medium size we want flex  */}
             <Text d={{ base: "none", md: "flex" }} px="4">
               Search User
@@ -147,10 +147,10 @@ const SideDrawer = () => {
             {loading ? (
               <ChatLoading />
             ) : (
-              searchResult?.map((user) => (
+              searchResult.map((user) => (
                 <UserListItem
-                  key={user._id}
                   user={user}
+                  key={user._id}
                   handleFunction={() => accessChat(user._id)}
                 />
               ))
