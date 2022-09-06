@@ -18,6 +18,8 @@ import {
   DrawerBody,
   Input,
   useToast,
+  Toast,
+  Spinner,
 } from "@chakra-ui/react";
 import { UserListItem } from "../UserAvatar/UserListItem";
 import { axios } from "axios";
@@ -25,10 +27,10 @@ import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { ChatState } from "../../Context/ChatProvider";
 import ProfileModel from "./ProfileModel";
 import { useHistory } from "react-router-dom";
-import ChatLoading from "../ChatLoading";
+import { ChatLoading } from "../ChatLoading";
 
 const SideDrawer = () => {
-  const { user } = ChatState();
+  const { user, setSelectedChat, chats, setChats } = ChatState();
 
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -78,7 +80,33 @@ const SideDrawer = () => {
     }
   };
 
-  const accessChat = (userId) => {};
+  const accessChat = async (userId) => {
+    try {
+      setLoadingChat(true);
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authentication: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.post("/api/chat", { userId }, config);
+
+      if (!chats.find((c) => c._id === data.id)) setChats([data, ...chats]);
+      setSelectedChat(data);
+      setLoadingChat(false);
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Error in Fetching the chat",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }
+  };
 
   return (
     <>
@@ -148,13 +176,15 @@ const SideDrawer = () => {
               <ChatLoading />
             ) : (
               searchResult.map((user) => (
-                <UserListItem
-                  user={user}
-                  key={user._id}
-                  handleFunction={() => accessChat(user._id)}
-                />
+                // <UserListItem
+                //   user={user}
+                //   key={user._id}
+                //   handleFunction={() => accessChat(user._id)}
+                // />
+                <span>UserListItem</span>
               ))
             )}
+            {loading && <Spinner ml="auto" d="flex" />}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

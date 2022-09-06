@@ -18,4 +18,4 @@ const ChatLoading = () => {
   );
 };
 
-export default ChatLoading;
+export { ChatLoading };
