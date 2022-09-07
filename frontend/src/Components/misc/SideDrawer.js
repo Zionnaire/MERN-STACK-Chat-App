@@ -1,27 +1,27 @@
 import React, { useState } from "react";
-import { Box } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import { useDisclosure } from "@chakra-ui/hooks";
+import { Input } from "@chakra-ui/input";
+import { Box, Text } from "@chakra-ui/layout";
 import {
-  Button,
-  Tooltip,
-  Text,
   Menu,
   MenuButton,
-  MenuList,
-  Avatar,
-  MenuItem,
   MenuDivider,
+  MenuItem,
+  MenuList,
+} from "@chakra-ui/menu";
+import {
   Drawer,
-  useDisclosure,
-  DrawerOverlay,
+  DrawerBody,
   DrawerContent,
   DrawerHeader,
-  DrawerBody,
-  Input,
-  useToast,
-  Toast,
-  Spinner,
-} from "@chakra-ui/react";
-import { UserListItem } from "../UserAvatar/UserListItem";
+  DrawerOverlay,
+} from "@chakra-ui/modal";
+import { Tooltip } from "@chakra-ui/tooltip";
+import { Avatar } from "@chakra-ui/avatar";
+import { useToast } from "@chakra-ui/toast";
+import { Spinner } from "@chakra-ui/spinner";
+import UserListItem from "../UserAvatar/UserListItem";
 import { axios } from "axios";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { ChatState } from "../../Context/ChatProvider";
@@ -54,6 +54,7 @@ const SideDrawer = () => {
         isClosable: true,
         position: "top-left",
       });
+      return;
     }
 
     try {
@@ -123,7 +124,7 @@ const SideDrawer = () => {
           <Button variant="ghost" onClick={onOpen}>
             <i className="fas fa-search"></i>
             {/* d is the when we have to show this parti. code in this given ex. base -> smallest screen we dont want to show that on medium size we want flex  */}
-            <Text d={{ base: "none", md: "flex" }} px="4">
+            <Text display={{ base: "none", md: "flex" }} px="4">
               Search User
             </Text>
           </Button>
@@ -163,7 +164,7 @@ const SideDrawer = () => {
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">Search User</DrawerHeader>
           <DrawerBody>
-            <Box d="flex" pb={2}>
+            <Box display="flex" pb={2}>
               <Input
                 placeholder="Search by name or email"
                 mr={2}
@@ -175,13 +176,12 @@ const SideDrawer = () => {
             {loading ? (
               <ChatLoading />
             ) : (
-              searchResult.map((user) => (
-                // <UserListItem
-                //   user={user}
-                //   key={user._id}
-                //   handleFunction={() => accessChat(user._id)}
-                // />
-                <span>UserListItem</span>
+              searchResult?.map((user) => (
+                <UserListItem
+                  user={user}
+                  key={user._id}
+                  handleFunction={() => accessChat(user._id)}
+                />
               ))
             )}
             {loading && <Spinner ml="auto" d="flex" />}
